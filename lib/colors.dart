@@ -109,7 +109,7 @@ class MyColors {
 }
 
 class MyIsTvMode {
-  static  late bool isTvMode;
+  static late bool isTvMode;
   void init(MyIsTvClass myTv) async {
     //print("------------------MyIsTvMode init myTv: " + myTv.isTvSet.toString());
     if (myTv.isTvSet!) {
@@ -121,7 +121,7 @@ class MyIsTvMode {
 }
 
 class MyIsTermsMode {
-  static  late bool isTermsMode;
+  static late bool isTermsMode;
   void init(MyisTermsClass myterms) async {
     //print("------------------MyIsTermsMode init myTv: " + myTv.IsTermsSet.toString());
     if (myterms.isTermsSet!) {
@@ -133,7 +133,7 @@ class MyIsTermsMode {
 }
 
 class MyIsOldPlayerMode {
-  static  late bool isOldPlayerMode;
+  static late bool isOldPlayerMode;
   void init(MyIsOldPlayerClass myOldPlayer) async {
     //print("------------------MyIsOldPlayerMode init myOldPlayer: " + myOldPlayer.isOldPlayerSet.toString());
     if (myOldPlayer.isOldPlayerSet!) {
@@ -145,7 +145,7 @@ class MyIsOldPlayerMode {
 }
 
 class MyTexStyle {
-  static late TextStyle  menu;
+  static late TextStyle menu;
   static late TextStyle menusmall;
   static late TextStyle menubold;
   static late TextStyle infobutton;
@@ -154,9 +154,17 @@ class MyTexStyle {
   static late TextStyle heading;
   static late TextStyle buttonstyle;
   static late TextStyle menubuttonstyle;
-  static late TextStyle menubuttonstylewhite = TextStyle(fontSize: 17.0,color: Colors.white,letterSpacing: -0.4,decoration: TextDecoration.none);
+  static late TextStyle menubuttonstylewhite = TextStyle(
+      fontSize: 17.0,
+      color: Colors.white,
+      letterSpacing: -0.4,
+      decoration: TextDecoration.none);
   static late TextStyle small;
-  static late TextStyle smallwhite = TextStyle(fontSize: 10,color: Colors.white, fontWeight: FontWeight.w600,);
+  static late TextStyle smallwhite = TextStyle(
+    fontSize: 10,
+    color: Colors.white,
+    fontWeight: FontWeight.w600,
+  );
 
   void init(MyThemeClass myColors) async {
     if (myColors.themename.toString() == "theme1") {
@@ -246,7 +254,7 @@ class MyTexStyle {
 }
 
 class MyCommonConstants {
-  static  late String defaultSource;
+  static late String defaultSource;
   void initDefaultSource(MyDefaultSourceClass mySource) async {
     if (mySource.sourcenum.toString() == "0") {
       defaultSource = "0";
@@ -259,7 +267,7 @@ class MyCommonConstants {
     }
   }
 
-  static  late String defaultinfoapi;
+  static late String defaultinfoapi;
   void initDefaultapiinfo(MyDefaultInfoApiClass myapiinfo) async {
     if (myapiinfo.infoapinum.toString() == "0") {
       defaultinfoapi = "0";
@@ -326,7 +334,7 @@ https://ww.gogoanimes.org/
   static String serType2 = "Type2";
 
   static late String defaultBaseURL;
-  static  late  String serverType;
+  static late String serverType;
 
   void initDefaultBaseURL(MyDefaultBaseURLClass myBaseURL) async {
     if (myBaseURL.baseurllink.toString() == "b0") {
@@ -374,7 +382,7 @@ https://ww.gogoanimes.org/
 
   static const platformid = const MethodChannel("IronSourceAdBridge");
 
-   Future<void> addToVideoToDatabase(
+  Future<void> addToVideoToDatabase(
     String name,
     String videoUrl,
     String thunmbnaillink,
@@ -399,7 +407,7 @@ https://ww.gogoanimes.org/
           .replaceAll('.M3U8', '');
     }
     if (thunmbnaillink.trim().isNotEmpty) {
-      final response = await http.get(thunmbnaillink.trim());
+      final response = await http.get(Uri.parse(thunmbnaillink.trim()));
       if (response.statusCode == 200) {
       } else {
         thunmbnaillink = 'EMPTY';
@@ -421,7 +429,7 @@ https://ww.gogoanimes.org/
       "imageurl": thunmbnaillink,
       'isgrabbed': (isgrabbed != '') ? '1' : '0',
       "downloadertype": MyCommonConstants.m3u8Downloader,
-      'headers' : headers.trim(),
+      'headers': headers.trim(),
       //"localname": "AnimeName" + " " + "EpisodeNumber" + " " + "ServerName" + " " + "Quality" + "Extention"
     });
 
@@ -508,16 +516,16 @@ https://ww.gogoanimes.org/
   String getQuality(String videoname) {
     String qua;
     try {
-    qua = videoname
-        .toString()
-        .split("_")[videoname.toString().split("_").length - 1]
-        .split(")")[1]
-        .split(".")[0].trim();
+      qua = videoname
+          .toString()
+          .split("_")[videoname.toString().split("_").length - 1]
+          .split(")")[1]
+          .split(".")[0]
+          .trim();
 
-        // if(qua.isEmpty){
-        //   qua = videoname;
-        // }
-        
+      // if(qua.isEmpty){
+      //   qua = videoname;
+      // }
     } catch (e) {
       qua = 'EMPTY';
     }
@@ -528,18 +536,17 @@ https://ww.gogoanimes.org/
   String getEpisodeNumber(String videoname) {
     String qua;
     try {
-    qua = videoname
-        .toString()
-        .split("_")[videoname.toString().split("_").length - 1]
-        .split("(")[1]
-        .split(")")[0]
-        .replaceAll("-", " ")
-        .trim();
-        
-        // if(qua.isEmpty){
-        //   qua = videoname;
-        // }
+      qua = videoname
+          .toString()
+          .split("_")[videoname.toString().split("_").length - 1]
+          .split("(")[1]
+          .split(")")[0]
+          .replaceAll("-", " ")
+          .trim();
 
+      // if(qua.isEmpty){
+      //   qua = videoname;
+      // }
     } catch (e) {
       qua = 'EMPTY';
     }
@@ -549,15 +556,18 @@ https://ww.gogoanimes.org/
   String getTitleName(String videoname) {
     String qua;
     try {
-    qua = videoname
-        .toString()
-        .replaceAll(videoname.toString().split("_")[videoname.toString().split("_").length - 1],  "")
-        .replaceAll("_", " ")
-        .trim()
-        ;
-        if(qua.isEmpty){
-          qua = videoname;
-        }
+      qua = videoname
+          .toString()
+          .replaceAll(
+              videoname
+                  .toString()
+                  .split("_")[videoname.toString().split("_").length - 1],
+              "")
+          .replaceAll("_", " ")
+          .trim();
+      if (qua.isEmpty) {
+        qua = videoname;
+      }
     } catch (e) {
       qua = 'EMPTY';
     }
@@ -570,9 +580,9 @@ https://ww.gogoanimes.org/
     showDialog<T>(
       barrierDismissible: barrierDismissible!,
       context: context!,
-      builder: (context) => Shortcuts(
-          shortcuts: {LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent()},
-          child: child!),
+      builder: (context) => Shortcuts(shortcuts: {
+        LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent()
+      }, child: child!),
     );
   }
 
@@ -608,27 +618,20 @@ https://ww.gogoanimes.org/
         }   */
   }
 
-
-      void videoAd(int index) async {
+  void videoAd(int index) async {
     if (adsworking == 1) {
-      
       if (index == 9999) {
         ////////////////////load ads
-        
       } else if (index == 1) {
         ////////////////////rewarded
         print('MyCommonConstants rewardedAd() /////////////////////////////');
-        AdCel.showInterstitialAdZone(AdCelAdType.REWARDED,"Menu");
-
-     
+        AdCel.showInterstitialAdZone(AdCelAdType.REWARDED, "Menu");
       } else if (index == 0) {
         print("SHOWING interstitail AD");
-        AdCel.showInterstitialAdZone(AdCelAdType.INTERSTITIAL,"Menu");
-   
-      } 
+        AdCel.showInterstitialAdZone(AdCelAdType.INTERSTITIAL, "Menu");
+      }
     }
   }
-
 
   /*
   void videoAd(int index) async {
@@ -715,7 +718,7 @@ https://ww.gogoanimes.org/
       }
     }
   }*/
-  
+
   /*Future<String> videoAd(int index) async {
     if (adsworking == 1) {
       AdmostInterstitial interstitialAd;
@@ -860,7 +863,7 @@ https://ww.gogoanimes.org/
     );
   }
 
-    void showdialogFlash({
+  void showdialogFlash({
     FlashPosition? position,
     context,
     // FlashStyle? style,
@@ -872,7 +875,6 @@ https://ww.gogoanimes.org/
     required Color backgroundColor,
     required Color borderColor,
     bool enableDrag = true,
-
   }) {
     showFlash(
       context: context,
@@ -880,28 +882,24 @@ https://ww.gogoanimes.org/
       duration: Duration(seconds: duration),
       builder: (context, controller) {
         return Flash.dialog(
-              controller: controller,
-              backgroundColor: backgroundColor,
-              margin: const EdgeInsets.only(left: 40.0, right: 40.0),
-              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-              child: Padding(
+          controller: controller,
+          backgroundColor: backgroundColor,
+          margin: const EdgeInsets.only(left: 40.0, right: 40.0),
+          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+          child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: DefaultTextStyle(
                 style: TextStyle(color: MyColors.primary1),
                 child: Container(
                     width: width, height: height, child: childwidget)),
           ),
-            );
+        );
       },
     );
   }
-
-
 }
 
-
-
-class MyAdsOnVideoPage extends  StatelessWidget{
+class MyAdsOnVideoPage extends StatelessWidget {
   const MyAdsOnVideoPage();
   @override
   Widget build(BuildContext context) {
@@ -909,9 +907,9 @@ class MyAdsOnVideoPage extends  StatelessWidget{
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        if(adsworking == 1)...[
+        if (adsworking == 1) ...[
           //  MyAdmostBanner(),
-            MyAdmostBanner(),
+          MyAdmostBanner(),
         ]
         /*const MyFacebookBanner(),
         Padding(padding: EdgeInsets.symmetric(vertical: 3),),
@@ -960,33 +958,33 @@ class MyAdsOnVideoPage extends  StatelessWidget{
   }
 }
 
-class MyAdmostBanner extends StatelessWidget with AdCelBannerListener{
-
+class MyAdmostBanner extends StatelessWidget with AdCelBannerListener {
   MyAdmostBanner();
-  
-   late AdCelBannerController _adCelBannerController;
+
+  late AdCelBannerController _adCelBannerController;
   @override
   Widget build(BuildContext context) {
     print("/////------------------render MyAdmostBanner--------");
     return Card(
-        elevation: 0,
-        color: MyColors.opp1.withOpacity(0),
-        clipBehavior: Clip.hardEdge,
-        child: Container(
-          alignment: Alignment.center,
-                height: 50,
-                // color: Colors.blue[700],
-                child: AdCelBanner(
-                  adSize: AdCelBanner.SIZE_320x50,
-                  listener: this,
-                  onBannerCreated: (AdCelBannerController controller) {
-                    print('MAIN.DART >>>> Load Banner Ad with ID = ${controller.getId}');
-                    controller.setRefreshInterval(35);
-                    _adCelBannerController = controller;
-                  },
-                ),
-              ),
-        );
+      elevation: 0,
+      color: MyColors.opp1.withOpacity(0),
+      clipBehavior: Clip.hardEdge,
+      child: Container(
+        alignment: Alignment.center,
+        height: 50,
+        // color: Colors.blue[700],
+        child: AdCelBanner(
+          adSize: AdCelBanner.SIZE_320x50,
+          listener: this,
+          onBannerCreated: (AdCelBannerController controller) {
+            print(
+                'MAIN.DART >>>> Load Banner Ad with ID = ${controller.getId}');
+            controller.setRefreshInterval(35);
+            _adCelBannerController = controller;
+          },
+        ),
+      ),
+    );
   }
 
   // Banner Callbacks
@@ -1017,7 +1015,6 @@ class MyAdmostBanner extends StatelessWidget with AdCelBannerListener{
   void onBannerLoad() {
     print('MAIN.DART >>>> onBannerLoad');
   }
-
 }
 
 // class MyAdmostBanner extends  StatelessWidget{
@@ -1030,7 +1027,7 @@ class MyAdmostBanner extends StatelessWidget with AdCelBannerListener{
 //       color: MyColors.primary1,
 //                     child:
 //                     AdmostBanner(
-//                       adUnitId: 'fad2a5c7-6df6-4636-bc14-f701285bb429',   
+//                       adUnitId: 'fad2a5c7-6df6-4636-bc14-f701285bb429',
 //                       adSize: AdmostBannerSize.BANNER,
 //                       listener: (AdmostAdEvent event,
 //                           Map<String, dynamic> args) {
@@ -1048,9 +1045,6 @@ class MyAdmostBanner extends StatelessWidget with AdCelBannerListener{
 //                 );
 //   }
 // }
-
-
-
 
 class MySliverSpace extends StatelessWidget {
   const MySliverSpace({Key? key, required this.x}) : super(key: key);
@@ -1123,9 +1117,9 @@ class _LineChartSampleState extends State<LineChartSample> {
 
   @override
   Widget build(BuildContext context) {
-    double tmp = widget.videoTaskItem.speedDouble();
+    double? tmp = widget.videoTaskItem.speedDouble();
     // spots.add(FlSpot(spots.length.toDouble(), tmp));
-    speedlist.add(tmp);
+    speedlist.add(tmp ?? 0);
     if (speedlist.length > 100) speedlist.removeAt(0);
     //print("----------------apots.len: " + speedlist.length.toString() + "   |      " + tmp.toString());
     const dur = Duration(seconds: 10);
@@ -1176,7 +1170,7 @@ class _LineChartSampleState extends State<LineChartSample> {
       //shadow: Shadow(color: Colors.black, blurRadius: 10),
       spots: spots,
       isCurved: true,
-      colors: gradientColors,
+      gradient: LinearGradient(colors: gradientColors),
       barWidth: 2,
       isStrokeCapRound: true,
       showingIndicators: [1, 2, 5, 1, 4, 5],
@@ -1186,7 +1180,9 @@ class _LineChartSampleState extends State<LineChartSample> {
       ),
       belowBarData: BarAreaData(
         show: true,
-        colors: gradientColors.map((color) => color.withOpacity(0.3)).toList(),
+        gradient: LinearGradient(
+            colors:
+                gradientColors.map((color) => color.withOpacity(0.3)).toList()),
       ),
     );
     return LineChartData(
@@ -1257,9 +1253,8 @@ class _LineChartSampleState extends State<LineChartSample> {
       maxX: 99,
       minY: miny - (miny / 2),
       maxY: maxy + (maxy / 3),
-
       showingTooltipIndicators: [
-        ShowingTooltipIndicators(10, [LineBarSpot(lBardata, 0, spots.first)])
+        ShowingTooltipIndicators(10 as List<LineBarSpot>, )
       ],
       lineBarsData: [lBardata],
     );
@@ -1369,7 +1364,7 @@ class MyNameLogo extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-      return Image.asset('assets/namelogo.png');
+    return Image.asset('assets/namelogo.png');
   }
 }
 
@@ -1538,11 +1533,24 @@ class DownloadEpisodelist {
         iscompleted = map['iscompleted'] == 1 ? true : false;
 }
 
-
-extension StringCasingExtension on String {    ///capitalize string
-  String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
-  String removeClutter() => length > 0 ?'${this.replaceAll("%20", " ").replaceAll("%E2%98%86", "☆").replaceAll("%E2%99%A1", "♡")}':'';
-  String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
-  String getTitleFromUrl(String? removeformatString) =>  length > 0 ? '${this.toString().split("/").last.trim().replaceAll("mp4", '').replaceAll(removeformatString.toString(), '')}' : '';
-  String removelastString(String? removeformatString) =>  length > 0 ? ('${this.toString()[this.toString().length-1].trim()}' == removeformatString.toString() ? '${substring(0,this.toString().length-1)}': this)  : '';
+extension StringCasingExtension on String {
+  ///capitalize string
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String removeClutter() => length > 0
+      ? '${this.replaceAll("%20", " ").replaceAll("%E2%98%86", "☆").replaceAll("%E2%99%A1", "♡")}'
+      : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
+  String getTitleFromUrl(String? removeformatString) => length > 0
+      ? '${this.toString().split("/").last.trim().replaceAll("mp4", '').replaceAll(removeformatString.toString(), '')}'
+      : '';
+  String removelastString(String? removeformatString) => length > 0
+      ? ('${this.toString()[this.toString().length - 1].trim()}' ==
+              removeformatString.toString()
+          ? '${substring(0, this.toString().length - 1)}'
+          : this)
+      : '';
 }

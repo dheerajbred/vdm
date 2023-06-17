@@ -17,40 +17,40 @@ class VideoTaskState {
 
 class VideoTaskItem {
   String url;
-  int downloadCreateTime;
-  int taskState;
-  String mimeType;
-  String finalUrl;
-  int errorCode;
-  int videoType;
-  M3U8 m3u8;
-  int totalTs;
-  int curTs;
-  double speed;
-  double percent;
-  int downloadSize;
-  int totalSize;
-  String fileHash;
-  String saveDir;
-  bool isCompleted;
-  bool isInDatabase;
-  int lastUpdateTime;
-  String fileName;
-  String filePath;
-  bool paused;
+  int? downloadCreateTime;
+  int? taskState;
+  String? mimeType;
+  String? finalUrl;
+  int? errorCode;
+  int? videoType;
+  M3U8? m3u8;
+  int? totalTs;
+  int? curTs;
+  double? speed;
+  double? percent;
+  int? downloadSize;
+  int? totalSize;
+  String? fileHash;
+  String? saveDir;
+  bool? isCompleted;
+  bool? isInDatabase;
+  int? lastUpdateTime;
+  String? fileName;
+  String? filePath;
+  bool? paused;
 
-  VoidCallback onDownloadDefault;
-  VoidCallback onDownloadPending;
-  VoidCallback onDownloadPrepare;
-  VoidCallback onDownloadStart;
-  VoidCallback onDownloadProgress;
-  VoidCallback onDownloadSpeed;
-  VoidCallback onDownloadPause;
-  VoidCallback onDownloadError;
-  VoidCallback onDownloadSuccess;
+  VoidCallback? onDownloadDefault;
+  VoidCallback? onDownloadPending;
+  VoidCallback? onDownloadPrepare;
+  VoidCallback? onDownloadStart;
+  VoidCallback? onDownloadProgress;
+  VoidCallback? onDownloadSpeed;
+  VoidCallback? onDownloadPause;
+  VoidCallback? onDownloadError;
+  VoidCallback? onDownloadSuccess;
 
   VideoTaskItem({
-    this.url,
+    required this.url,
     this.downloadCreateTime,
     this.taskState = VideoTaskState.DEFAULT,
     this.mimeType,
@@ -101,7 +101,7 @@ class VideoTaskItem {
         ? json['m3u8'] == null
             ? null
             : (M3U8()..fromJson(Map<String, dynamic>.from(json['m3u8'])))
-        : m3u8.fromJson(Map<String, dynamic>.from(json['m3u8']));
+        : m3u8?.fromJson(Map<String, dynamic>.from(json['m3u8']));
     totalTs = json['totalTs'];
     curTs = json['curTs'];
     speed = json['speed'];
@@ -165,23 +165,23 @@ class VideoTaskItem {
   }
 
   String speedString() {
-    return '${_getSize(speed)}/s';
+    return '${_getSize(speed ?? 0)}/s';
   }
 
   String percentString() {
-    return '${_getPercent(percent)}';
+    return '${_getPercent(percent ?? 0)}';
   }
 
   String downloadSizeString() {
-    return '${_getSize(downloadSize.toDouble())}';
+    return '${_getSize((downloadSize ?? 0).toDouble())}';
   }
 
   String totalSizeString() {
-    return '${_getSize(totalSize.toDouble())}';
+    return '${_getSize((totalSize ?? 0).toDouble())}';
   }
 
   //////////////dheer speedDouble
-  double speedDouble() {
+  double? speedDouble() {
     return speed;
   }
 
@@ -211,7 +211,9 @@ class VideoTaskItem {
     return 'default';
   }
 
-  String pause() {}
+  String? pause() {
+    return null;
+  }
 
   resume() {}
 }
