@@ -219,7 +219,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver, AdC
     for (int i = count; i < _tasks.length; i++) {
       // print(i.toString() +")   " +"_tasks[i].isComp)))" +_tasks[i].isComp.toString());
       final item = VideoDownloader.generateItem(_tasks[i].link!);
-      item.onDownloadSuccess = () {
+      item?.onDownloadSuccess = () {
         // print(i.toString() +")   ----VideoDownloader-----item: " +item.toString() +"     *onDownloadSuccess*     " +item.taskStateString());
         // print("----onDownloadSuccess filteredEpisodes[i].videoname: " + filteredEpisodes[i].videoname +" -------filePath: " +_tasks[i].videoTaskItem!.filePath +"-------iscpmpleted: " + filteredEpisodes[i].iscompleted.toString());
         _tasks[i].status = MyCommonConstants.downloadSuccess;
@@ -227,38 +227,38 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver, AdC
         _tasks[i].localnametask = _tasks[i].videoTaskItem!.filePath;
         if (filteredEpisodes[i].iscompleted != true) {
           filteredEpisodes[i].iscompleted = true;
-          filteredEpisodes[i].localurl = _tasks[i].videoTaskItem!.filePath;
+          filteredEpisodes[i].localurl = _tasks[i].videoTaskItem!.filePath ?? "No Path";
           // print("////////////////////filteredEpisodes[i].videoname: " +filteredEpisodes[i].videoname +" | " +"filteredEpisodes[i].localurl: " +filteredEpisodes[i].localurl);
           db.updateMovie(filteredEpisodes[i]);
           _prepare();
         }
         if (mounted) setState(() {});
       };
-      item.onDownloadProgress = () {
+      item?.onDownloadProgress = () {
         //print(i.toString() + ")   ----VideoDownloader-----item: "+ item.toString() + "     *onDownloadProgress*     " + item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadDownloading;
         if (mounted) setState(() {});
       };
-      item.onDownloadSpeed = () {
+      item?.onDownloadSpeed = () {
         //print(i.toString() + ")   ----VideoDownloader-----item: "+ item.toString() + "     *onDownloadSpeed*     " + item.taskStateString());
         if (mounted) setState(() {});
       };
-      item.onDownloadError = () {
+      item?.onDownloadError = () {
         // print(i.toString() +")   ----VideoDownloader-----item: " +item.toString() +"     *onDownloadError*     " +item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadError;
         if (mounted) setState(() {});
       };
-      item.onDownloadPause = () {
+      item?.onDownloadPause = () {
         // print(i.toString() +")   ----VideoDownloader-----item: " +item.toString() +"     *onDownloadPause*     " +item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadPause;
         if (mounted) setState(() {});
       };
-      item.onDownloadPending = () {
+      item?.onDownloadPending = () {
         // print(i.toString() +")   ----VideoDownloader-----item: " +item.toString() +"     *onDownloadPending*     " +item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadPending;
         if (mounted) setState(() {});
       };
-      item.onDownloadPrepare = () {
+      item?.onDownloadPrepare = () {
         // print(i.toString() +")   ----VideoDownloader-----item: " +item.toString() +"     *onDownloadPrepare*     " +item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadPrepare;
         if (mounted) setState(() {});
@@ -2105,7 +2105,7 @@ final path= Directory(str + "/$folderName");
                                                                           .toString() + "%", style: new TextStyle(fontSize: 14, color: MyColors.opp1,  fontWeight: FontWeight.w500, ),),*/
                                                                                             //Text(_items[index].task.progress.toString()+ "%", style: new TextStyle(fontSize: 14, color: MyColors.opp1,  fontWeight: FontWeight.w500, ),),
                                                                                             Text(
-                                                                                              _items[index].task.videoTaskItem!.percent.toInt().round().toString() + "%",
+                                                                                              _items[index].task.videoTaskItem!.percent!.toInt().round().toString() + "%",
                                                                                               style: TextStyle(
                                                                                                 fontSize: 14,
                                                                                                 color: MyColors.opp1,
@@ -2123,7 +2123,7 @@ final path= Directory(str + "/$folderName");
                                                                                 : 0 )
                                                                                 : 0
                                                                                 )*/
-                                                                                                  (_items[index].task.videoTaskItem!.percent) / 100,
+                                                                                                  (_items[index].task.videoTaskItem!.percent!) / 100,
                                                                                               backgroundColor: Colors.white,
                                                                                               progressColor: Colors.blue,
                                                                                             ),

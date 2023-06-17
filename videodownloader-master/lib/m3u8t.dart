@@ -1,15 +1,15 @@
 class M3U8Ts {
-  double duration;
-  int index;
-  String url;
-  String name;
-  int tsSize;
-  bool hasDiscontinuity;
-  bool hasKey;
-  String method;
-  String keyUri;
-  String keyIV;
-  bool isMessyKey;
+  double? duration;
+  int? index;
+  String? url;
+  String? name;
+  int? tsSize;
+  bool? hasDiscontinuity;
+  bool? hasKey;
+  String? method;
+  String? keyUri;
+  String? keyIV;
+  bool? isMessyKey;
 
   M3U8Ts({
     this.duration,
@@ -47,15 +47,15 @@ class M3U8Ts {
 }
 
 class M3U8 {
-  String url;
-  String baseUrl;
-  String hostUrl;
-  List<M3U8Ts> tsList;
-  double targetDuration;
-  int sequence;
-  int version;
-  bool hasEndList;
-  int curTsIndex;
+  String? url;
+  String? baseUrl;
+  String? hostUrl;
+  List<M3U8Ts>? tsList;
+  double? targetDuration;
+  int? sequence;
+  int? version;
+  bool? hasEndList;
+  int? curTsIndex;
   M3U8({
     this.url,
     this.baseUrl,
@@ -71,7 +71,7 @@ class M3U8 {
   int getDuration() {
     int duration = 0;
     tsList?.forEach((element) {
-      duration += element.duration.toInt();
+      duration += element.duration!.toInt();
     });
     return duration;
   }
