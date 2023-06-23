@@ -52,7 +52,6 @@ dependencies:
   icofont_flutter: ^1.3.0
   line_awesome_flutter: ^1.0.1
   # admost_flutter_plugin: "^0.1.2"
-  flutter_adcel: ^1.2.0
   fl_chart: ^0.62.0
   filesize: ^2.0.1
   open_file: ^3.3.1

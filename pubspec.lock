@@ -294,14 +294,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_adcel:
-    dependency: "direct main"
-    description:
-      name: flutter_adcel
-      sha256: "5a7291a1e854a9dd5f54999acc89b65f8509f68b3bbbfceed78da285ac49d3d0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   flutter_bloc:
     dependency: "direct main"
     description:
