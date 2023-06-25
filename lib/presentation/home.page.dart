@@ -189,7 +189,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
           db.updateMovie(filteredEpisodes[i]);
           _prepare();
         }
-        FlutterNotification.pushDownloadedNotification(item.toString());
+        FlutterNotification.pushDownloadedNotification(
+            _tasks[i].videoTaskItem!.filePath ?? "NO DATA");
         if (mounted) setState(() {});
       };
       item?.onDownloadProgress = () {
