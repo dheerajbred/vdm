@@ -142,9 +142,9 @@ class VideoTaskItem {
   }
 
   String _getSize(double size) {
-    final giga = 1024 * 1024 * 1024;
-    final mega = 1024 * 1024;
-    final kilo = 1024;
+    const giga = 1024 * 1024 * 1024;
+    const mega = 1024 * 1024;
+    const kilo = 1024;
     final f = NumberFormat('###.00#');
     if (size >= giga) {
       double i = (size / giga);
@@ -169,15 +169,15 @@ class VideoTaskItem {
   }
 
   String percentString() {
-    return '${_getPercent(percent ?? 0)}';
+    return _getPercent(percent ?? 0);
   }
 
   String downloadSizeString() {
-    return '${_getSize((downloadSize ?? 0).toDouble())}';
+    return _getSize((downloadSize ?? 0).toDouble());
   }
 
   String totalSizeString() {
-    return '${_getSize((totalSize ?? 0).toDouble())}';
+    return _getSize((totalSize ?? 0).toDouble());
   }
 
   //////////////dheer speedDouble

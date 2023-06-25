@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flash/flash.dart';
@@ -140,6 +139,7 @@ https://ww.gogoanimes.org/
     String thunmbnaillink,
     String isgrabbed,
     String headers,
+    String? path,
   ) async {
     if (name.trim().isEmpty) {
       name = videoUrl
@@ -172,7 +172,7 @@ https://ww.gogoanimes.org/
     List<DownloadEpisodelist> downloadEpisodelist = [];
     List<Map<String, dynamic>> tmplinkmap = [];
     var dir = await getExternalStorageDirectory();
-    var dirloc = "${dir!.path}/AnimePrime/";
+    var dirloc = "${path ?? dir!.path}/AnimePrime/";
     print("isgrabbed: $isgrabbed");
     tmplinkmap.add({
       "videoname": name,
@@ -190,7 +190,8 @@ https://ww.gogoanimes.org/
         .map((data) => DownloadEpisodelist.fromJson(data))
         .toList();
 
-    print("downloadEpisodelist------------- ${downloadEpisodelist.first.isgrabbed}");
+    print(
+        "downloadEpisodelist------------- ${downloadEpisodelist.first.isgrabbed}");
 
     DownloadEpisodelist downloadState = downloadEpisodelist.first;
     print("---video downloadState.videoname: ${downloadState.videoname}");
@@ -388,8 +389,8 @@ https://ww.gogoanimes.org/
             padding: const EdgeInsets.all(10.0),
             child: DefaultTextStyle(
                 style: TextStyle(color: MyColors.primary1),
-                child: SizedBox(
-                    width: width, height: height, child: childwidget)),
+                child:
+                    SizedBox(width: width, height: height, child: childwidget)),
           ),
         );
       },
@@ -423,12 +424,11 @@ https://ww.gogoanimes.org/
             padding: const EdgeInsets.all(10.0),
             child: DefaultTextStyle(
                 style: TextStyle(color: MyColors.primary1),
-                child: SizedBox(
-                    width: width, height: height, child: childwidget)),
+                child:
+                    SizedBox(width: width, height: height, child: childwidget)),
           ),
         );
       },
     );
   }
 }
-

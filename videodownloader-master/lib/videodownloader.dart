@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:videodownloader/videotaskitem.dart';
 export 'package:videodownloader/videotaskitem.dart';
 
 class VideoDownloader {
-  static VideoDownloader _instance = VideoDownloader._internal();
-  static const MethodChannel _channel = const MethodChannel('videodownloader');
+  static final VideoDownloader _instance = VideoDownloader._internal();
+  static const MethodChannel _channel = MethodChannel('videodownloader');
   static bool _inited = false;
   List<VideoTaskItem?> items = [];
 
