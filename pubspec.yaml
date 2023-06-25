@@ -100,6 +100,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_local_notifications: ^14.1.1
   file: ^6.1.4
+  filesystem_picker: ^3.1.0
+  file_picker: ^5.3.2
 
 dev_dependencies:
   flutter_test:

@@ -29,6 +29,7 @@ class FlutterNotification {
       'Download Progress of $name',
       importance: Importance.low,
       priority: Priority.low,
+      onlyAlertOnce: true,
       showProgress: true,
       maxProgress: 100,
       progress: progress,
