@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 //import 'package:dio/dio.dart';
 import 'package:path/path.dart' as p;
+import 'dart:math' as math;
 import 'package:path_provider/path_provider.dart';
 // import 'package:media_storage/media_storage.dart';
 import 'package:external_path/external_path.dart';
@@ -64,6 +65,8 @@ import 'package:get/get.dart';
 import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
 import 'package:ndialog/ndialog.dart';
 
+import '../utils/local_notification_init.use.dart';
+
 class Downloader extends StatefulWidget {
   const Downloader({
     Key? key,
@@ -99,8 +102,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
 
   String downloadStatusString = "zzzzzzzz";
   String downloadpersistentString = "aaaaaaaa";
-  static const MethodChannel channel =
-      MethodChannel('IronSourceAdBridge');
+  static const MethodChannel channel = MethodChannel('IronSourceAdBridge');
   static const EventChannel eventChannel = EventChannel('DOWNLOADING_CHANNEL');
 
   bool isFullIntent = false;
@@ -179,23 +181,42 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
           filteredEpisodes[i].iscompleted = true;
           filteredEpisodes[i].localurl =
               _tasks[i].videoTaskItem!.filePath ?? "No Path";
-          // print("////////////////////filteredEpisodes[i].videoname: " +filteredEpisodes[i].videoname +" | " +"filteredEpisodes[i].localurl: " +filteredEpisodes[i].localurl);
+          print("////////////////////filteredEpisodes[i].videoname: " +
+              filteredEpisodes[i].videoname +
+              " | " +
+              "filteredEpisodes[i].localurl: " +
+              filteredEpisodes[i].localurl);
           db.updateMovie(filteredEpisodes[i]);
           _prepare();
         }
+        FlutterNotification.pushDownloadedNotification(item.toString());
         if (mounted) setState(() {});
       };
       item?.onDownloadProgress = () {
-        //print(i.toString() + ")   ----VideoDownloader-----item: "+ item.toString() + "     *onDownloadProgress*     " + item.taskStateString());
+        print(i.toString() +
+            ")downloaded ITEM +>   ----VideoDownloader-----item: " +
+            item.toString() +
+            "     *onDownloadProgress*     " +
+            item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadDownloading;
+        FlutterNotification.pushUpdatedNotification(
+            item.percent!.floor(), item.toString());
         if (mounted) setState(() {});
       };
       item?.onDownloadSpeed = () {
-        //print(i.toString() + ")   ----VideoDownloader-----item: "+ item.toString() + "     *onDownloadSpeed*     " + item.taskStateString());
+        print(i.toString() +
+            ")   ----VideoDownloader-----item: " +
+            item.toString() +
+            "     *onDownloadSpeed*     " +
+            item.taskStateString());
         if (mounted) setState(() {});
       };
       item?.onDownloadError = () {
-        // print(i.toString() +")   ----VideoDownloader-----item: " +item.toString() +"     *onDownloadError*     " +item.taskStateString());
+        print(i.toString() +
+            ")   ----VideoDownloader-----item: " +
+            item.toString() +
+            "     *onDownloadError*     " +
+            item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadError;
         if (mounted) setState(() {});
       };
@@ -205,8 +226,14 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
         if (mounted) setState(() {});
       };
       item?.onDownloadPending = () {
-        // print(i.toString() +")   ----VideoDownloader-----item: " +item.toString() +"     *onDownloadPending*     " +item.taskStateString());
+        print(i.toString() +
+            ") >>>>>>> ASTHI  ----VideoDownloader-----item: " +
+            item.toString() +
+            "     *onDownloadPending*     " +
+            item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadPending;
+        FlutterNotification.pushUpdatedNotification(
+            item.percent!.floor(), item.toString());
         if (mounted) setState(() {});
       };
       item?.onDownloadPrepare = () {
@@ -224,13 +251,11 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
       count++;
     }
 
-   
     _permissisonReady = await _checkPermission();
 
     _appDocsDir = await getApplicationDocumentsDirectory();
     // print('_appDocsDir = $_appDocsDir');
 
-    
     setState(() {
       _isLoading = false;
     });
@@ -244,7 +269,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
     return File(pathName);
   }
 
-  
   Future<String> _setVideoSaveDirectory(String str) async {
     const folderName = "VDM Downloads";
     final path = Directory("$str/$folderName");
@@ -273,9 +297,11 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    FlutterNotification.askPermission();
+
     _internetChecker();
     //_refresh();
-
 
     initUniLinks();
 
@@ -291,8 +317,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
       });
     });
 
-   
-
     getboltdownloadscount();
 
     ExternalPath.getExternalStorageDirectories().then((value) {});
@@ -304,7 +328,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
     //subject.stream.listen(searchDataList);
     //setupList();
     _prepare();
-    
+
     _isLoading = true;
     _permissisonReady = false;
 
@@ -368,17 +392,14 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
 
   String tmp_initialLink = 'sss';
   Future<void> initUniLinks() async {
-
-
     try {
       String initialLink;
 
       _appLinks.getLatestAppLink().then((value) async {
         setState(() {
           initialLink = value.toString();
-          print('----------tmp_initialLink: $initialLink  ---widget:${widget.nointent_previousintent} ----${(widget.nointent_previousintent.trim() !=
-                          value.toString().trim()) &&
-                      ((widget.nointent_previousintent).toString() != '')}');
+          print(
+              '----------tmp_initialLink: $initialLink  ---widget:${widget.nointent_previousintent} ----${(widget.nointent_previousintent.trim() != value.toString().trim()) && ((widget.nointent_previousintent).toString() != '')}');
           if (value != null) {
             if ((widget.nointent_previousintent.trim() !=
                     value.toString().trim()) &&
@@ -391,17 +412,11 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                 intentString: value.toString(),
                 isDirectdownfile: false,
               ));
-
             }
-
-
           }
         });
       });
-
-     
-    } on PlatformException {
-    }
+    } on PlatformException {}
   }
 
   void setupList() async {}
@@ -430,8 +445,9 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
   }
 
   void onRemovePressed(_TaskInfo task, int index) {
-    print("onRemovePressed----------task: ${task.name!} ----------index: $index");
-    
+    print(
+        "onRemovePressed----------task: ${task.name!} ----------index: $index");
+
     setState(() {});
     VideoDownloader.delete(task.videoTaskItem!, deleteSourceFile: true);
     DownloadDatabase db = DownloadDatabase();
@@ -450,15 +466,11 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
       filteredEpisodes.remove(filteredEpisodes[index]);
     });
 
-   
-
-
     try {
       if (task.downloadPagetype == MyCommonConstants.m3u8Downloader) {
         File videoFile = File(task.localnametask!
             .replaceAll(
-                "/${task.localnametask!
-                        .split("/")[task.localnametask!.split("/").length - 1]}",
+                "/${task.localnametask!.split("/")[task.localnametask!.split("/").length - 1]}",
                 "")
             .trim());
         videoFile.delete(recursive: true);
@@ -475,8 +487,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
     _prepare();
     //initState();
   }
-
- 
 
   SliverList _sliverfav() {
     return SliverList(
@@ -518,8 +528,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                     //width: 200,
                                     //padding: EdgeInsets.all(5.0),
                                     decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(2)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(2)),
                                       //gradient: new LinearGradient(colors: [ Colors.blue.withOpacity(0.7) ,Colors.transparent],begin: FractionalOffset.centerLeft,end: FractionalOffset.centerRight,stops: [0.5, 1.5],)
                                     ),
                                     child: Text(
@@ -718,17 +728,14 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         color: Colors.white,
-       
       );
-    } 
-    else if (task.status == MyCommonConstants.downloadSuccess) {
+    } else if (task.status == MyCommonConstants.downloadSuccess) {
       return const Row(
         children: [
           Text(
             'Completed',
             style: TextStyle(color: Colors.purple),
           ),
-          
         ],
       );
     } else {
@@ -737,10 +744,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
         style: TextStyle(color: Colors.purple),
       );
     }
-   
   }
-
-  
 
   void _showDownloadSlideDialog(String finalstring) async {
     double w = MediaQuery.of(context).size.width;
@@ -778,8 +782,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                     height: 85,
                     width: 85,
                     decoration: const BoxDecoration(
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(15)),
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
                         image: DecorationImage(
                             image: AssetImage('assets/vlclogo.png'),
                             fit: BoxFit.fill)),
@@ -837,7 +840,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                     ),
                     color: const Color(0xFF695dfc),
                     //borderRadius: BorderRadius.all(Radius.circular(15)),
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 10),
                   ),
                 ),
                 Expanded(
@@ -850,7 +854,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                         size: 18, color: MyColors.opp1),
                     //color: Colors.black.withOpacity(1),
                     borderRadius: const BorderRadius.all(Radius.circular(5)),
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 10),
                   ),
                 ),
               ],
@@ -894,8 +899,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
             // res == 'rewardAd_COMPLETED' || res == 'interstitialAd_COMPLETED'
             ) {
           print("sucesssssss");
-        } else {
-          print("failllled ad res: $res");
         }
 
         shownumberboltdownsflash('+5');
@@ -997,7 +1000,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
-    
 
     return Scaffold(
         drawer: const CustomDrawer(
@@ -1026,8 +1028,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                       MyCommonConstants().setSystemUI();
                       throw 'throwed';
                     },
-                    child:
-                        Column(
+                    child: Column(
                       children: [
                         Container(
                             height: h - 125 - 30 - 40 + 30 + 55 - 5,
@@ -1061,9 +1062,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                           .symmetric(
                                                       horizontal: 10),
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                            vertical: 5),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(vertical: 5),
                                                     child: Slidable(
                                                       //key: _slidablekey,
                                                       actionPane:
@@ -1086,7 +1086,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                 _tasks[index]
                                                                     .localnametask!);
                                                           }
-
                                                         },
                                                         child: Container(
                                                           //height: 100,
@@ -1149,9 +1148,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                           child: const Icon(
                                                                               Ionicons.play,
                                                                               color: Colors.red,
-                                                                              size: 35)
-                                                                          ),
-
+                                                                              size: 35)),
                                                                       Container(
                                                                         height:
                                                                             80,
@@ -1172,7 +1169,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                         ),
                                                                         // padding: EdgeInsets.all(5.0),
                                                                       ),
-
                                                                       ((_items[index].task.videoTaskItem!.taskStateString() == MyCommonConstants.downloadDefault || _items[index].task.videoTaskItem!.taskStateString() == MyCommonConstants.downloadStart || _items[index].task.videoTaskItem!.taskStateString() == MyCommonConstants.downloadPending || _items[index].task.status == MyCommonConstants.downloadError) &&
                                                                               _items[index].task.isComp == false)
                                                                           ? GestureDetector(
@@ -1195,13 +1191,11 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                                         headers = headersMap;
                                                                                       } catch (e) {
                                                                                         headers = {
-                                                                                         
                                                                                           "User-Agent": "animdl/1.5.84",
                                                                                         };
                                                                                       }
                                                                                     } else {
                                                                                       headers = {
-                                                                                       
                                                                                         "User-Agent": "animdl/1.5.84",
                                                                                       };
                                                                                     }
@@ -1221,10 +1215,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                                   VideoDownloader.startDownloadWithHeader(
                                                                                     _items[index].task.videoTaskItem!,
                                                                                     headers: headers,
-                                                                                   
                                                                                   );
 
-                                                                               
                                                                                   Future.delayed(const Duration(seconds: 2), () {
                                                                                     MyCommonConstants().showCenterFlash(
                                                                                       context: context,
@@ -1251,7 +1243,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                                                 TextSpan(text: "\n\n If download doesn't start in a few seconds, clear from RAM and restart the app ", style: TextStyle(color: MyColors.primary1.withOpacity(1), fontSize: 12, backgroundColor: Colors.yellow, fontWeight: FontWeight.w600)),
                                                                                               ]),
                                                                                             ),
-                                                                                           
                                                                                           ],
                                                                                         ),
                                                                                       ),
@@ -1263,7 +1254,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                                       });
                                                                                     });
                                                                                   });
-
                                                                                 } else {
                                                                                   MyCommonConstants().showCenterFlash(
                                                                                     context: context,
@@ -1330,7 +1320,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                               ),
                                                                             )
                                                                           : Container(),
-                                                                    
                                                                       (_items[index].task.videoTaskItem!.taskState == VideoTaskState.DOWNLOADING ||
                                                                               _items[index].task.videoTaskItem!.taskState == VideoTaskState.PAUSE)
                                                                           ? Container(
@@ -1343,7 +1332,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                                 children: <Widget>[
-                                                                                
                                                                                   Text(
                                                                                     "${_items[index].task.videoTaskItem!.percent!.toInt().round()}%",
                                                                                     style: TextStyle(
@@ -1356,8 +1344,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                                   LinearPercentIndicator(
                                                                                     //width: 140.0,
                                                                                     lineHeight: 7.0,
-                                                                                    percent: 
-                                                                                        (_items[index].task.videoTaskItem!.percent!) / 100,
+                                                                                    percent: (_items[index].task.videoTaskItem!.percent!) / 100,
                                                                                     backgroundColor: Colors.white,
                                                                                     progressColor: Colors.blue,
                                                                                   ),
@@ -1367,10 +1354,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                               padding: const EdgeInsets.all(5.0),
                                                                             )
                                                                           : Container()
-                                                                     
                                                                     ],
                                                                   ),
-
                                                                   const Padding(
                                                                     padding: EdgeInsets
                                                                         .symmetric(
@@ -1383,8 +1368,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                         Column(
                                                                       children: <Widget>[
                                                                         Container(
-
-
                                                                           alignment: const Alignment(
                                                                               -1,
                                                                               -1),
@@ -1392,9 +1375,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                               Container(
                                                                             child:
                                                                                 Text(
-
                                                                               (_items[index].task.isGrabbed!) ? MyCommonConstants().getTitleName(_items[index].task.name!) : _items[index].task.name.toString(),
-
                                                                               softWrap: true,
                                                                               textAlign: TextAlign.left,
                                                                               overflow: TextOverflow.ellipsis,
@@ -1420,8 +1401,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                                       alignment: const Alignment(-1, -1),
                                                                                       child: Container(
                                                                                         padding: const EdgeInsets.all(2.0),
-                                                                                        decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(2)), color: MyColors.reddy
-                                                                                            ),
+                                                                                        decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(2)), color: MyColors.reddy),
                                                                                         child: Text(
                                                                                           // _items[index].task.name!,
                                                                                           MyCommonConstants().getEpisodeNumber(_items[index].task.name!),
@@ -1441,8 +1421,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                                       alignment: const Alignment(-1, -1),
                                                                                       child: Container(
                                                                                         padding: const EdgeInsets.all(2.0),
-                                                                                        decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(2)), color: MyColors.purp
-                                                                                            ),
+                                                                                        decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(2)), color: MyColors.purp),
                                                                                         child: Text(
                                                                                           MyCommonConstants().getQuality(_items[index].task.name!),
                                                                                           softWrap: true,
@@ -1621,18 +1600,16 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                     ),
                                                                   ),
                                                                 ],
-                                                               
                                                               ]
                                                             ],
                                                           ),
                                                         ),
                                                       ),
-                                                   
+
                                                       key: Key(_items[index]
                                                           .task
                                                           .name!),
                                                       secondaryActions: <Widget>[
-                                                                                           
                                                         if (_items[index]
                                                                 .task
                                                                 .downloadPagetype ==
@@ -1654,8 +1631,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                                 _items[index]
                                                                     .task
                                                                     .name!),
-                                                            onTap: () {
-                                                            },
+                                                            onTap: () {},
                                                           ),
                                                         IconSlideAction(
                                                           caption: 'Delete',
@@ -1679,7 +1655,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                                     ),
                                                   ),
                                                 );
-                                               
                                               },
                                               childCount: _items.length,
                                             ),
@@ -1822,7 +1797,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                                           boltdowncnt / 10, // Defaults to 0.5.
                                       valueColor: AlwaysStoppedAnimation(
                                           (boltdowncnt >= 10)
-                                              ? const Color.fromARGB(255, 48, 17, 152)
+                                              ? const Color.fromARGB(
+                                                  255, 48, 17, 152)
                                               : Colors
                                                   .blueAccent), // Defaults to the current Theme's accentColor.
                                       backgroundColor: MyColors.opp1.withOpacity(
@@ -1902,15 +1878,12 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                             ],
                           ),
                         ),
-
                         Container(
                             width: w,
                             height: 125 - 55,
                             alignment: Alignment.center,
                             color: Colors.black,
                             child: const MyAdsOnVideoPage()),
-
-                      
                       ],
                     ),
                   )
@@ -1922,8 +1895,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 24.0),
+                            padding: EdgeInsets.symmetric(horizontal: 24.0),
                             child: Text(
                               'Please grant accessing storage permission to continue -_-',
                               textAlign: TextAlign.center,
@@ -1954,8 +1926,6 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
                     ),
                   ));
   }
-
- 
 }
 
 class _TaskInfo {
@@ -1991,6 +1961,5 @@ class _ItemHolder {
   final _TaskInfo task;
   bool isExpanded = false;
 
-  _ItemHolder(
-      {required this.name, required this.task});
+  _ItemHolder({required this.name, required this.task});
 }

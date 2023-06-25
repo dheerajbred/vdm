@@ -1,9 +1,8 @@
 import 'package:flutter/services.dart' as ser;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:videodownloader/videodownloader.dart';
 
 void main() {
-  const ser.MethodChannel channel = const ser.MethodChannel('videodownloader');
+  const ser.MethodChannel channel = ser.MethodChannel('videodownloader');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
