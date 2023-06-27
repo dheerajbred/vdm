@@ -17,6 +17,7 @@ import 'package:videodown/infrastructure/styles.dart';
 import 'package:videodown/infrastructure/themes.dart';
 import 'package:videodown/presentation/widgets/ads.widget.dart';
 import 'package:videodown/presentation/widgets/line_chart_simple.widget.dart';
+import 'package:videodown/utils/directory_downloads.dart';
 import 'package:videodownloader/videodownloader.dart';
 import 'package:open_file/open_file.dart';
 //import 'package:simple_permissions/simple_permissions.dart';
@@ -306,9 +307,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
 
     initUniLinks();
 
-    ExternalPath.getExternalStoragePublicDirectory(
-            ExternalPath.DIRECTORY_DOWNLOADS)
-        .then((value) {
+    localPath.then((value) {
       _setVideoSaveDirectory(value).then((val) {
         VideoDownloader.init(
             config: VideoDownloadConfig(
@@ -318,9 +317,15 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
       });
     });
 
+    // ExternalPath.getExternalStoragePublicDirectory(
+    //         ExternalPath.DIRECTORY_DOWNLOADS)
+    //     .then((value) {
+
+    // });
+
     getboltdownloadscount();
 
-    ExternalPath.getExternalStorageDirectories().then((value) {});
+    // ExternalPath.getExternalStorageDirectories().then((value) {});
 
     //BackButtonInterceptor.add(myInterceptor);
     //MyCommonConstants().videoAd(0);
