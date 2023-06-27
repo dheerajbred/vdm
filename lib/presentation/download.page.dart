@@ -48,6 +48,7 @@ class _DownloadFromShareInPageState extends State<DownloadFromShareInPage> {
   String name = '';
   String headers = '';
   String isgrabbed = '';
+  String? localUrl;
 
   _navigateToDownloadPage(String val) async {
     String slpitstring = '***8***';
@@ -186,6 +187,26 @@ class _DownloadFromShareInPageState extends State<DownloadFromShareInPage> {
                 title: Text('Add to Downloads', style: MyTexStyle.tile),
                 automaticallyImplyLeading: false,
                 titleSpacing: 0,
+                actions: [
+                  OutlinedButton(
+                      onPressed: () {
+                        openFolderPicker().then((value) {
+                          setState(() {
+                            localUrl = value;
+                          });
+                        });
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.folder_copy_rounded),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Folder Path")
+                        ],
+                      ))
+                ],
                 leading: IconButton(
                     onPressed: () {
                       Get.back();
@@ -398,35 +419,31 @@ class _DownloadFromShareInPageState extends State<DownloadFromShareInPage> {
                             onPressed: () async {
                               if (_urlController.text == '') {
                               } else {
-                                openFolderPicker().then((value) {
-                                  MyCommonConstants()
-                                      .addToVideoToDatabase(
-                                          _nameController.text,
-                                          _urlController.text,
-                                          _thumbUrlController.text,
-                                          _isgrabbedController.text,
-                                          _headerController.text,
-                                          value)
-                                      .then((value) {
-                                    if (widget.isDirectdownfile) {
-                                      toast.Fluttertoast.showToast(
-                                          backgroundColor:
-                                              Colors.blueAccent[700],
-                                          msg:
-                                              'Clear from RAM & restart the app',
-                                          toastLength: toast.Toast.LENGTH_LONG,
-                                          gravity: toast.ToastGravity.BOTTOM);
-                                    }
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Downloader(
-                                              title: "Downloads",
-                                              nointent_previousintent:
-                                                  widget.intentString),
-                                        ),
-                                        (Route<dynamic> route) => false);
-                                  });
+                                MyCommonConstants()
+                                    .addToVideoToDatabase(
+                                        _nameController.text,
+                                        _urlController.text,
+                                        _thumbUrlController.text,
+                                        _isgrabbedController.text,
+                                        _headerController.text,
+                                        localUrl)
+                                    .then((value) {
+                                  if (widget.isDirectdownfile) {
+                                    toast.Fluttertoast.showToast(
+                                        backgroundColor: Colors.blueAccent[700],
+                                        msg: 'Clear from RAM & restart the app',
+                                        toastLength: toast.Toast.LENGTH_LONG,
+                                        gravity: toast.ToastGravity.BOTTOM);
+                                  }
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Downloader(
+                                            title: "Downloads",
+                                            nointent_previousintent:
+                                                widget.intentString),
+                                      ),
+                                      (Route<dynamic> route) => false);
                                 });
                               }
                             },
