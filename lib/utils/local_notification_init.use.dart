@@ -23,11 +23,11 @@ class FlutterNotification {
     print(result);
   }
 
-  static pushUpdatedNotification(int progress, String name) async {
+  static pushUpdatedNotification(int progress, String name, String id) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'download_manager',
+      'download_manager_$id$name',
       'Download Progress of $name',
-      importance: Importance.low,
+      importance: Importance.min,
       priority: Priority.low,
       onlyAlertOnce: true,
       showProgress: true,
@@ -36,7 +36,7 @@ class FlutterNotification {
       ongoing:
           true, // Ensures the notification stays ongoing in the notification panel
       ticker:
-          'Download in progress', // Shows a ticker text for the ongoing notification
+          'Download in progress of $name', // Shows a ticker text for the ongoing notification
     );
 
     var platformChannelSpecifics = NotificationDetails(
@@ -45,15 +45,15 @@ class FlutterNotification {
 
     await flutterLocalNotificationsPlugin.show(
       0,
-      'Download Progress',
+      'Download Progress of $name',
       '$progress%',
       platformChannelSpecifics,
     );
   }
 
-  static pushDownloadedNotification(String name) async {
-    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-      'download_manager_done',
+  static pushDownloadedNotification(String name, String id) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'download_manager_done$id',
       'Download Complete',
       importance: Importance.max,
       priority: Priority.high,

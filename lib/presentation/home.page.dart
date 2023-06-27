@@ -190,7 +190,7 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
           _prepare();
         }
         FlutterNotification.pushDownloadedNotification(
-            _tasks[i].videoTaskItem!.filePath ?? "NO DATA");
+            _tasks[i].videoTaskItem!.fileName ?? "NO DATA", i.toString());
         if (mounted) setState(() {});
       };
       item?.onDownloadProgress = () {
@@ -200,8 +200,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
             "     *onDownloadProgress*     " +
             item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadDownloading;
-        FlutterNotification.pushUpdatedNotification(
-            item.percent!.floor(), item.toString());
+        FlutterNotification.pushUpdatedNotification(item.percent!.floor(),
+            _tasks[i].videoTaskItem?.fileName ?? "<< No Name >>", i.toString());
         if (mounted) setState(() {});
       };
       item?.onDownloadSpeed = () {
@@ -233,8 +233,8 @@ class DownloaderState extends State<Downloader> with WidgetsBindingObserver {
             "     *onDownloadPending*     " +
             item.taskStateString());
         _tasks[i].status = MyCommonConstants.downloadPending;
-        FlutterNotification.pushUpdatedNotification(
-            item.percent!.floor(), item.toString());
+        FlutterNotification.pushUpdatedNotification(item.percent!.floor(),
+            _tasks[i].videoTaskItem?.fileName ?? "<< No Name >>", i.toString());
         if (mounted) setState(() {});
       };
       item?.onDownloadPrepare = () {
